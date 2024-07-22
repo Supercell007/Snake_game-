@@ -23,7 +23,7 @@ screen_height = window.winfo_screenheight()
 window_x = int((screen_width / 2) - (window_width / 2))
 window_y = int((screen_height / 2) - (window_height / 2))
 window.geometry(f"{window_width}x{window_height}+{window_x}+{window_y}")
-# Initialize the game
+# Initialize 
 snake = Tile(5 * TILE_SIZE, 5 * TILE_SIZE)  # Snake head
 food = Tile(random.randint(0, COLS - 1) * TILE_SIZE, random.randint(0, ROWS - 1) * TILE_SIZE)
 snake_body = []
@@ -31,8 +31,25 @@ velocityX = 0
 velocityY = 0
 gameover = False
 score = 0
+# colors for the snake
 snake_colors = ["lime green", "yellow", "cyan", "magenta", "blue"]
 current_color_index = 0
+game_over_art = """
+⠀⠀⠀⠀⠀⠀⢀⣤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⢤⣤⣀⣀⡀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⢀⡼⠋⠀⣀⠄⡂⠍⣀⣒⣒⠂⠀⠬⠤⠤⠬⠍⠉⠝⠲⣄⡀⠀⠀
+⠀⠀⠀⢀⡾⠁⠀⠊⢔⠕⠈⣀⣀⡀⠈⠆⠀⠀⠀⡍⠁⠀⠁⢂⠀⠈⣷⠀⠀
+⠀⠀⣠⣾⠥⠀⠀⣠⢠⣞⣿⣿⣿⣉⠳⣄⠀⠀⣀⣤⣶⣶⣶⡄⠀⠀⣘⢦⡀
+⢀⡞⡍⣠⠞⢋⡛⠶⠤⣤⠴⠚⠀⠈⠙⠁⠀⠀⢹⡏⠁⠀⣀⣠⠤⢤⡕⠱⣷
+⠘⡇⠇⣯⠤⢾⡙⠲⢤⣀⡀⠤⠀⢲⡖⣂⣀⠀⠀⢙⣶⣄⠈⠉⣸⡄⠠⣠⡿
+⠀⠹⣜⡪⠀⠈⢷⣦⣬⣏⠉⠛⠲⣮⣧⣁⣀⣀⠶⠞⢁⣀⣨⢶⢿⣧⠉⡼⠁
+⠀⠀⠈⢷⡀⠀⠀⠳⣌⡟⠻⠷⣶⣧⣀⣀⣹⣉⣉⣿⣉⣉⣇⣼⣾⣿⠀⡇⠀
+⠀⠀⠀⠈⢳⡄⠀⠀⠘⠳⣄⡀⡼⠈⠉⠛⡿⠿⠿⡿⠿⣿⢿⣿⣿⡇⠀⡇⠀
+⠀⠀⠀⠀⠀⠙⢦⣕⠠⣒⠌⡙⠓⠶⠤⣤⣧⣀⣸⣇⣴⣧⠾⠾⠋⠀⠀⡇⠀
+⠀⠀⠀⠀⠀⠀⠀⠈⠙⠶⣭⣒⠩⠖⢠⣤⠄⠀⠀⠀⠀⠀⠠⠔⠁⡰⠀⣧⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠲⢤⣀⣀⠉⠉⠀⠀⠀⠀⠀⠁⠀⣠⠏⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠛⠒⠲⠶⠤⠴⠒⠚⠁⠀⠀
+"""
+
 def change_direction(e):
     global velocityX, velocityY
     if gameover:
@@ -64,41 +81,42 @@ def move():
         snake_body.append(Tile(food.x, food.y))
         food.x = random.randint(0, COLS - 1) * TILE_SIZE
         food.y = random.randint(0, ROWS - 1) * TILE_SIZE
-        global current_color_index#change colour of snake as it eats
+        # Change snake color on food consumption
         current_color_index = (current_color_index + 1) % len(snake_colors)
-        # Update score
-        global score
+         # Update score
         score += 1
- # Update the snake body
+# Update body
     for i in range(len(snake_body) - 1, 0, -1):
         snake_body[i].x = snake_body[i - 1].x
         snake_body[i].y = snake_body[i - 1].y
     if snake_body:
         snake_body[0].x = snake.x
         snake_body[0].y = snake.y
-  # Move the snake head
+  # Move head
     snake.x += velocityX * TILE_SIZE
     snake.y += velocityY * TILE_SIZE
 def draw():
     global snake, food, snake_body, gameover, current_color_index, score
-
     move()
     canvas.delete("all")
 
     # Draw the snake head
     canvas.create_rectangle(snake.x, snake.y, snake.x + TILE_SIZE, snake.y + TILE_SIZE, fill=snake_colors[current_color_index])
-
-    # Draw the snake body
+#  snake body
     for tile in snake_body:
         canvas.create_rectangle(tile.x, tile.y, tile.x + TILE_SIZE, tile.y + TILE_SIZE, fill=snake_colors[current_color_index])
+
+    # Draw the food
     canvas.create_rectangle(food.x, food.y, food.x + TILE_SIZE, food.y + TILE_SIZE, fill="red")
+
+    # Draw the score
     canvas.create_text(10, 10, text=f"Score: {score}", fill="white", font=("Arial", 16), anchor="nw")
+
     if gameover:
         canvas.create_text(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, text="GAME OVER", fill="white", font=("Arial", 24))
+        canvas.create_text(WINDOW_WIDTH // 2, (WINDOW_HEIGHT // 2) + 50, text=game_over_art, fill="white", font=("Courier", 10), anchor="n")
 
     window.after(100, draw)  # 100ms = 1/10 seconds, 10 frames/sec
-
 draw()
 window.bind("<KeyPress>", change_direction)
-
 window.mainloop()
